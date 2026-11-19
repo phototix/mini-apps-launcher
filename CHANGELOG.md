@@ -13,6 +13,7 @@ First working version.
 - Optional per-app elevation, arguments, working directory, and icon
 - Missing executables are greyed out instead of failing
 - Rotating log at `%LOCALAPPDATA%\MiniAppsLauncher\launcher.log`
+- `--launch <id>` command-line mode for shortcuts and automation
 - `--selftest` diagnostic mode
 - Build, install, and uninstall PowerShell scripts
 - GitHub Actions build and tagged release workflow

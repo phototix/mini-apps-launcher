@@ -17,6 +17,13 @@ namespace MiniAppsLauncher
                 return;
             }
 
+            string launchId = GetLaunchId(args);
+            if (!string.IsNullOrEmpty(launchId))
+            {
+                Environment.ExitCode = LaunchFromCommandLine(launchId);
+                return;
+            }
+
             bool createdNew;
             using (Mutex mutex = new Mutex(true, MutexName, out createdNew))
             {
@@ -41,6 +48,55 @@ namespace MiniAppsLauncher
 
                 Log.Info("Exited");
                 GC.KeepAlive(mutex);
+            }
+        }
+
+        private static string GetLaunchId(string[] args)
+        {
+            if (args == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (string.Equals(args[i], "--launch", StringComparison.OrdinalIgnoreCase)
+                    && i + 1 < args.Length)
+                {
+                    return args[i + 1];
+                }
+            }
+
+            return null;
+        }
+
+        private static int LaunchFromCommandLine(string id)
+        {
+            try
+            {
+                AppConfig config = ConfigStore.Load();
+                foreach (AppEntry app in config.Apps)
+                {
+                    if (!string.Equals(app.Id, id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    string message;
+                    bool launched = ProcessLauncher.TryLaunch(app, out message);
+                    Log.Info("Command-line launch of " + app.DisplayName + ": "
+                        + (launched ? "OK" : "FAILED")
+                        + (string.IsNullOrEmpty(message) ? "" : " (" + message + ")"));
+                    return launched ? 0 : 2;
+                }
+
+                Log.Error("Command-line launch: no app with id '" + id + "'");
+                return 3;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Command-line launch failed", ex);
+                return 1;
             }
         }
 

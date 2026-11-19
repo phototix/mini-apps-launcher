@@ -114,6 +114,15 @@ Windows services run in Session 0, isolated from the interactive desktop, so the
 
 The process stays running until you choose **Exit**.
 
+## Command line
+
+```powershell
+MiniAppsLauncher.exe --launch <id>
+MiniAppsLauncher.exe --selftest
+```
+
+`--launch` starts a configured app directly, using the same path and working-directory rules as the menu. It is handy for shortcuts, Stream Deck buttons, or scripts. Exit codes: `0` started, `1` unexpected error, `2` launch failed, `3` unknown id. All attempts are recorded in the log.
+
 ## Diagnostics
 
 ```powershell
