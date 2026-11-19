@@ -1,0 +1,55 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        shell: pwsh
+        run: ./build.ps1
+
+      - name: Self-test
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath .\dist\MiniAppsLauncher.exe `
+            -ArgumentList '--selftest' -Wait -PassThru
+          $report = Join-Path $env:TEMP 'MiniAppsLauncher.selftest.txt'
+          if (Test-Path $report) { Get-Content $report }
+          if ($process.ExitCode -ne 0) {
+            throw "Self-test failed with exit code $($process.ExitCode)"
+          }
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MiniAppsLauncher
+          path: dist/MiniAppsLauncher.exe
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: MiniAppsLauncher
+          path: dist
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/MiniAppsLauncher.exe
+          generate_release_notes: true

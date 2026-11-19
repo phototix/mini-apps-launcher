@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "apps": [
+    {
+      "id": "totp",
+      "name": "TOTP Manager",
+      "path": "%USERPROFILE%\\totp-tool\\dist\\TOTP.exe",
+      "arguments": "",
+      "workingDirectory": "%USERPROFILE%\\totp-tool\\dist",
+      "icon": "%USERPROFILE%\\totp-tool\\app.ico",
+      "category": "Security",
+      "runAsAdmin": false,
+      "enabled": true,
+      "singleInstance": true
+    },
+    {
+      "id": "image-enhancer",
+      "name": "Image Enhancer",
+      "path": "%USERPROFILE%\\Tools\\Real-ESRGAN\\ImageEnhancer.exe",
+      "arguments": "",
+      "workingDirectory": "%USERPROFILE%\\Tools\\Real-ESRGAN",
+      "icon": "%USERPROFILE%\\Tools\\Real-ESRGAN\\ImageEnhancer.ico",
+      "category": "Media",
+      "runAsAdmin": false,
+      "enabled": true,
+      "singleInstance": true
+    }
+  ]
+}
